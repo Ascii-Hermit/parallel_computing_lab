@@ -1,36 +1,33 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include <mpi.h>
+#include <stdio.h>
 
-int main() {
-    MPI_Init(&argc, &argv);
-    int rank, size;
-    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-    MPI_Comm_size(MPI_COMM_WORLD, &size);
+int main(int argc, char*argv[]){
+	int rank,size;
+	MPI_Init(&argc,&argv);
+	MPI_Comm_rank(MPI_COMM_WORLD,&rank);
+	MPI_Comm_size(MPI_COMM_WORLD,&size);
+	MPI_Status status;
+	int arr[size],n;
 
-    if (rank == 0) {
-        int buffer_size = (size - 1) * sizeof(int) + MPI_BSEND_OVERHEAD; 
+	if(rank == 0){
+		printf("Enter %d elements : ",size);
+		for(int i=0;i<size;i++){
+			scanf("%d",&arr[i]);
+		}
+		for(int i=1;i<size;i++){
+			MPI_Send(&arr[i],1,MPI_INT,i,i,MPI_COMM_WORLD);
+		}
+	}
+	else{
+		MPI_Recv(&n,1,MPI_INT,0,rank,MPI_COMM_WORLD,&status);
+		if(rank%2 == 0){
+			printf("Rank = %d, Square = %d \n",rank,n*n);
+		}
+		else{
+			printf("Rank = %d, Cube = %d \n",rank,n*n*n);
+		}
+	}															
 
-        void *buffer = malloc(buffer_size);
-        MPI_Buffer_attach(buffer, buffer_size);
-
-        for (int i = 1; i < size; i++) {
-            int x = rand();
-            MPI_Send(&rand, 1, MPI_INT, i, 0, MPI_COMM_WORLD);
-        }
-
-        MPI_Buffer_detach(&buffer, &buffer_size);
-        free(buffer);
-    } else {
-        int x;
-        MPI_Recv(&x, 1, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-
-        if (rank & 1) 
-            printf("Rank %d: %d\n", rank, x * x);
-        else 
-            printf("Rank %d: %d\n", rank, x * x * x);
-    }
-
-    MPI_Finalize();
-    return 0;
+	MPI_Finalize();
+	return 0;
 }
