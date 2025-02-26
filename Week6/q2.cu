@@ -38,8 +38,8 @@ int main() {
 
     for(int i=0;i<N;i++){
         findMinKernel<<<gridSize, blockSize>>>(d_arr, d_result, h_arr[i] ,N);
+        cudaDeviceSynchronize();
     }
-    cudaDeviceSynchronize();
 
     cudaMemcpy(h_result, d_result, N * sizeof(int), cudaMemcpyDeviceToHost);
 
