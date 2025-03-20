@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <cuda_runtime.h>
 
 __global__ void reduceWord(char* word, char* reducedWord, int wordLength) {
     int idx = threadIdx.x; 
