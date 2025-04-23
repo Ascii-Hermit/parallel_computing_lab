@@ -27,11 +27,13 @@ int main() {
     cudaMalloc((void**)&d_B, size);
     cudaMalloc((void**)&d_C, size);
 
+
+    // dest, src, count, kind
     cudaMemcpy(d_A, h_A, size, cudaMemcpyHostToDevice);
     cudaMemcpy(d_B, h_B, size, cudaMemcpyHostToDevice);
 
     int threadsPerBlock = 256;  
-    int blocksPerGrid = (N + threadsPerBlock - 1) / threadsPerBlock;  
+    int blocksPerGrid = (N + threadsPerBlock - 1) / threadsPerBlock;   // 4
 
     vector_addition<<<N, threadsPerBlock>>>(d_A, d_B, d_C, N);
     vector_addition<<<blocksPerGrid, N>>>(d_A, d_B, d_C, N);
@@ -41,6 +43,7 @@ int main() {
     cudaMemcpy(h_C, d_C, size, cudaMemcpyDeviceToHost);
 
     printf("Result:\n");
+    
     for (int i = 0; i < 10; i++) {
         printf("C[%d] = %d\n", i, h_C[i]);
     }

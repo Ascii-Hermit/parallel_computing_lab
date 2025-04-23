@@ -6,7 +6,7 @@ __global__ void add(int *a, int *b, int *c, int N) {
     if (idx < N) {
         c[idx] = a[idx] + b[idx];
     }
-    //printf("hello\n");
+    // printf("hello\n");
 }
 
 int main() {
@@ -36,8 +36,7 @@ int main() {
     cudaMemcpy(d_a, h_a, size, cudaMemcpyHostToDevice);
     cudaMemcpy(d_b, h_b, size, cudaMemcpyHostToDevice);
 
-    // Launch kernel with 256 threads per block and enough blocks to cover N elements
-    add<<<(N + 255) / 256, 256>>>(d_a, d_b, d_c, N);
+    add<<<(N + 255 - 1) / 256, 256>>>(d_a, d_b, d_c, N); // remember this gic
 
     // Copy the result from device to host
     cudaMemcpy(h_c, d_c, size, cudaMemcpyDeviceToHost);

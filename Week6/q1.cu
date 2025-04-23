@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <cuda_runtime.h>
+#include <cuda.h>
 
 __global__ void convolution_1d_kernel(int *n, int *m, int *output, int width, int m_size) {
     int idx = blockIdx.x * blockDim.x + threadIdx.x;
